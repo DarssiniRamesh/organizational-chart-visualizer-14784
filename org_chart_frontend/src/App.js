@@ -1,47 +1,83 @@
-import React, { useState, useEffect } from 'react';
-import logo from './logo.svg';
+import React from 'react';
+import OrgChart from './components/OrgChart';
 import './App.css';
+
+const orgData = [
+  {
+    name: 'Brett Ramirez',
+    role: 'Project Lead (Overall)',
+    children: [
+      {
+        name: 'Chad Ramirez',
+        role: 'Project Manager',
+        children: [
+          {
+            name: 'Suresh Jagannathan',
+            role: 'IT Project Manager (Lead Expert)'
+          },
+          {
+            name: 'Malini Srinivasan',
+            role: 'Tech Lead'
+          },
+          {
+            name: 'Ravi Rampersad',
+            role: 'Project Governance and client support'
+          },
+          {
+            name: 'Dale Connell',
+            role: 'Nursing / Maintenance Lead'
+          },
+          {
+            name: 'Shankar S. Narasimhan',
+            role: 'Software Architect'
+          },
+          {
+            name: 'Pratima Suresh Kumar',
+            role: 'Back-End Developer/Analyst'
+          },
+          {
+            name: 'Mahendra C/ Priyanka Mahajan',
+            role: 'Front-End Developer/Analyst/ UX Designer'
+          },
+          {
+            name: 'Dighvijay Giri',
+            role: 'IoT Expert'
+          },
+          {
+            name: 'Preetha Balasundaram',
+            role: 'Data Engineer/Architect'
+          },
+          {
+            name: 'Ganesh Babu',
+            role: 'QA Expert'
+          },
+          {
+            name: 'Sanjay S',
+            role: 'Developer'
+          },
+          {
+            name: 'Pon Arun Kumar',
+            role: 'Developer'
+          },
+          {
+            name: 'Brandon Murphy',
+            role: 'Biodiversity Expert'
+          },
+          {
+            name: 'Brent Barnette',
+            role: 'Parametric Insurance Expert/ Training'
+          }
+        ]
+      }
+    ]
+  }
+];
 
 // PUBLIC_INTERFACE
 function App() {
-  const [theme, setTheme] = useState('light');
-
-  // Effect to apply theme to document element
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-  }, [theme]);
-
-  // PUBLIC_INTERFACE
-  const toggleTheme = () => {
-    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
-  };
-
   return (
     <div className="App">
-      <header className="App-header">
-        <button 
-          className="theme-toggle" 
-          onClick={toggleTheme}
-          aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-        >
-          {theme === 'light' ? '🌙 Dark' : '☀️ Light'}
-        </button>
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <p>
-          Current theme: <strong>{theme}</strong>
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <OrgChart data={orgData} />
     </div>
   );
 }
