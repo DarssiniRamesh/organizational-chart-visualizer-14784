@@ -3,15 +3,22 @@
   --oc-text: #222;
   --oc-border: #e0e0e0;
   --oc-row-hover: #fafafa;
-  --oc-lead-accent: #4068c0;
-  --oc-role-icon-size: 20px;
-  --oc-node-padding: 12px;
-  --oc-node-min-width: 250px;
-  --oc-node-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* Role-based colors */
+  --oc-lead-color: #2c5282;
+  --oc-manager-color: #3182ce;
+  --oc-tech-color: #4299e1;
+  --oc-dev-color: #63b3ed;
+  --oc-expert-color: #4fd1c5;
+  --oc-support-color: #718096;
+  
+  /* Compact sizing */
+  --oc-node-padding: 8px;
+  --oc-node-min-width: 220px;
+  --oc-node-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   
   width: 100%;
   max-width: 1600px;
-  margin: 2rem auto;
+  margin: 1rem auto;
   background: var(--oc-bg);
   border: 1px solid var(--oc-border);
   border-radius: 8px;
@@ -22,34 +29,34 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
+  padding: 0.75rem;
   border-bottom: 1px solid var(--oc-border);
   background: var(--oc-bg);
 }
 
 .org-chart-header h2 {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   color: var(--oc-text);
 }
 
 .export-button {
-  background-color: var(--oc-lead-accent);
+  background-color: var(--oc-lead-color);
   color: white;
   border: none;
-  padding: 8px 16px;
+  padding: 6px 12px;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s;
+  font-size: 13px;
+  transition: background-color 0.2s;
 }
 
 .export-button:hover {
-  background-color: #335599;
+  background-color: #234876;
 }
 
 .org-chart-container {
-  padding: 2rem;
+  padding: 1.5rem;
   overflow-x: auto;
   min-height: 400px;
 }
@@ -60,55 +67,101 @@
   min-width: var(--oc-node-min-width);
   background: var(--oc-bg);
   border: 1px solid var(--oc-border);
-  border-radius: 6px;
+  border-radius: 4px;
   box-shadow: var(--oc-node-shadow);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+/* Role-based styling */
+.org-node[data-role="lead"] {
+  border-left: 3px solid var(--oc-lead-color);
+}
+
+.org-node[data-role="manager"] {
+  border-left: 3px solid var(--oc-manager-color);
+}
+
+.org-node[data-role="tech"] {
+  border-left: 3px solid var(--oc-tech-color);
+}
+
+.org-node[data-role="developer"] {
+  border-left: 3px solid var(--oc-dev-color);
+}
+
+.org-node[data-role="expert"] {
+  border-left: 3px solid var(--oc-expert-color);
+}
+
+.org-node[data-role="support"] {
+  border-left: 3px solid var(--oc-support-color);
 }
 
 .org-node:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .org-node-inner {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 }
 
 .org-node-name {
-  font-weight: 500;
+  font-weight: 600;
   color: var(--oc-text);
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .org-node-role {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   color: var(--oc-text);
   opacity: 0.85;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .role-icon {
-  color: var(--oc-lead-accent);
-  width: var(--oc-role-icon-size);
-  height: var(--oc-role-icon-size);
+  width: 16px;
+  height: 16px;
 }
 
-/* Tree structure styling */
+.role-icon[data-role="lead"] { color: var(--oc-lead-color); }
+.role-icon[data-role="manager"] { color: var(--oc-manager-color); }
+.role-icon[data-role="tech"] { color: var(--oc-tech-color); }
+.role-icon[data-role="developer"] { color: var(--oc-dev-color); }
+.role-icon[data-role="expert"] { color: var(--oc-expert-color); }
+.role-icon[data-role="support"] { color: var(--oc-support-color); }
+
+/* Tree connection lines */
 .org-chart :global(.rst__lineHalfHorizontalRight::before),
 .org-chart :global(.rst__lineFullVertical::after),
 .org-chart :global(.rst__lineHalfVerticalTop::after),
 .org-chart :global(.rst__lineHalfVerticalBottom::after) {
-  background-color: var(--oc-border);
+  background-color: rgba(0, 0, 0, 0.15);
+  width: 1px;
+}
+
+/* Level-based indentation */
+.org-chart .rst__node {
+  padding-left: 1.5rem;
+}
+
+.org-chart .rst__node--level-1 {
+  padding-left: 2rem;
+}
+
+.org-chart .rst__node--level-2 {
+  padding-left: 2.5rem;
 }
 
 /* Responsive design */
 @media (max-width: 1024px) {
   .org-chart {
-    margin: 1rem;
+    margin: 0.75rem;
   }
   
   .org-chart-container {
@@ -116,26 +169,26 @@
   }
   
   .org-node {
-    min-width: 200px;
+    min-width: 180px;
   }
 }
 
 @media (max-width: 768px) {
   .org-node {
-    min-width: 180px;
-    padding: 8px;
+    min-width: 160px;
+    padding: 6px;
   }
   
   .org-node-name {
-    font-size: 14px;
-  }
-  
-  .org-node-role {
     font-size: 13px;
   }
   
+  .org-node-role {
+    font-size: 11px;
+  }
+  
   .role-icon {
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
   }
 }

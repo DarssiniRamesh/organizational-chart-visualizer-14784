@@ -5,6 +5,17 @@ import { getRoleIcon } from '../utils/iconMapping';
 import { toPng } from 'html-to-image';
 import './OrgChart.css';
 
+// Helper function to determine role category
+const getRoleCategory = (role) => {
+  const roleLower = role.toLowerCase();
+  if (roleLower.includes('lead') || roleLower.includes('project lead')) return 'lead';
+  if (roleLower.includes('manager')) return 'manager';
+  if (roleLower.includes('tech lead') || roleLower.includes('architect')) return 'tech';
+  if (roleLower.includes('developer') || roleLower.includes('analyst')) return 'developer';
+  if (roleLower.includes('expert')) return 'expert';
+  return 'support';
+};
+
 // PUBLIC_INTERFACE
 const OrgChart = ({ data }) => {
   const handleExport = async () => {
@@ -12,10 +23,13 @@ const OrgChart = ({ data }) => {
       const chartElement = document.getElementById('org-chart');
       const dataUrl = await toPng(chartElement, {
         quality: 0.95,
-        backgroundColor: '#ffffff'
+        backgroundColor: '#ffffff',
+        style: {
+          transform: 'scale(1.2)',
+          transformOrigin: 'top left'
+        }
       });
       
-      // Create download link
       const link = document.createElement('a');
       link.download = 'org-chart.png';
       link.href = dataUrl;
@@ -25,15 +39,18 @@ const OrgChart = ({ data }) => {
     }
   };
 
-  const renderNode = (person) => {
+  const renderNode = (person, level = 0) => {
+    const roleCategory = getRoleCategory(person.role);
+    
     return (
-      <div className="org-node">
+      <div className="org-node" data-role={roleCategory} data-level={level}>
         <div className="org-node-inner">
           <div className="org-node-name">{person.name}</div>
           <div className="org-node-role">
             <FontAwesomeIcon 
               icon={getRoleIcon(person.role)} 
-              className="role-icon" 
+              className="role-icon"
+              data-role={roleCategory}
               title={person.role}
             />
             <span className="role-text">{person.role}</span>
@@ -43,13 +60,13 @@ const OrgChart = ({ data }) => {
     );
   };
 
-  const renderTreeNodes = (nodeData) => {
+  const renderTreeNodes = (nodeData, level = 0) => {
     return (
-      <TreeNode label={renderNode(nodeData)}>
+      <TreeNode label={renderNode(nodeData, level)}>
         {nodeData.children?.map((child, index) => (
-          <TreeNode key={index} label={renderNode(child)}>
+          <TreeNode key={index} label={renderNode(child, level + 1)}>
             {child.children?.map((grandChild, idx) => (
-              <TreeNode key={idx} label={renderNode(grandChild)} />
+              <TreeNode key={idx} label={renderNode(grandChild, level + 2)} />
             ))}
           </TreeNode>
         ))}
@@ -71,9 +88,10 @@ const OrgChart = ({ data }) => {
       </div>
       <div className="org-chart-container">
         <Tree 
-          lineWidth={'2px'}
-          lineColor={'var(--oc-border)'}
-          lineBorderRadius={'10px'}
+          lineWidth={'1px'}
+          lineColor={'rgba(0, 0, 0, 0.15)'}
+          lineBorderRadius={'4px'}
+          nodePadding={'1.5rem'}
         >
           {renderTreeNodes(data[0])}
         </Tree>
