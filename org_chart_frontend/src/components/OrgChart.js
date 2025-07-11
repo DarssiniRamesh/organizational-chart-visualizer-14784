@@ -1,4 +1,5 @@
 import React from 'react';
+import { Tree, TreeNode } from 'react-organizational-chart';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getRoleIcon } from '../utils/iconMapping';
 import { toPng } from 'html-to-image';
@@ -24,41 +25,36 @@ const OrgChart = ({ data }) => {
     }
   };
 
-  const renderPerson = (person) => (
-    <tr className="org-chart-row" key={person.name}>
-      <td className="org-chart-cell name">{person.name}</td>
-      <td className="org-chart-cell role">
-        <FontAwesomeIcon 
-          icon={getRoleIcon(person.role)} 
-          className="role-icon" 
-          title={person.role}
-        />
-        <span className="role-text">{person.role}</span>
-      </td>
-    </tr>
-  );
+  const renderNode = (person) => {
+    return (
+      <div className="org-node">
+        <div className="org-node-inner">
+          <div className="org-node-name">{person.name}</div>
+          <div className="org-node-role">
+            <FontAwesomeIcon 
+              icon={getRoleIcon(person.role)} 
+              className="role-icon" 
+              title={person.role}
+            />
+            <span className="role-text">{person.role}</span>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
-  const renderHierarchy = (data) => {
-    const rows = [];
-    
-    // Add root person
-    rows.push(renderPerson(data[0]));
-    
-    // Add their direct reports
-    if (data[0].children) {
-      data[0].children.forEach(child => {
-        rows.push(renderPerson(child));
-        
-        // Add child's direct reports
-        if (child.children) {
-          child.children.forEach(grandChild => {
-            rows.push(renderPerson(grandChild));
-          });
-        }
-      });
-    }
-    
-    return rows;
+  const renderTreeNodes = (nodeData) => {
+    return (
+      <TreeNode label={renderNode(nodeData)}>
+        {nodeData.children?.map((child, index) => (
+          <TreeNode key={index} label={renderNode(child)}>
+            {child.children?.map((grandChild, idx) => (
+              <TreeNode key={idx} label={renderNode(grandChild)} />
+            ))}
+          </TreeNode>
+        ))}
+      </TreeNode>
+    );
   };
 
   return (
@@ -73,11 +69,15 @@ const OrgChart = ({ data }) => {
           Export as PNG
         </button>
       </div>
-      <table className="org-chart-table">
-        <tbody>
-          {renderHierarchy(data)}
-        </tbody>
-      </table>
+      <div className="org-chart-container">
+        <Tree 
+          lineWidth={'2px'}
+          lineColor={'var(--oc-border)'}
+          lineBorderRadius={'10px'}
+        >
+          {renderTreeNodes(data[0])}
+        </Tree>
+      </div>
     </div>
   );
 };

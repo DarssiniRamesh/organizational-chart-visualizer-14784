@@ -5,13 +5,17 @@
   --oc-row-hover: #fafafa;
   --oc-lead-accent: #4068c0;
   --oc-role-icon-size: 20px;
-  --oc-cell-padding: 12px 8px;
+  --oc-node-padding: 12px;
+  --oc-node-min-width: 250px;
+  --oc-node-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   
   width: 100%;
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 2rem auto;
   background: var(--oc-bg);
   border: 1px solid var(--oc-border);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .org-chart-header {
@@ -20,6 +24,13 @@
   align-items: center;
   padding: 1rem;
   border-bottom: 1px solid var(--oc-border);
+  background: var(--oc-bg);
+}
+
+.org-chart-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--oc-text);
 }
 
 .export-button {
@@ -37,36 +48,47 @@
   background-color: #335599;
 }
 
-.org-chart-table {
-  width: 100%;
-  border-collapse: collapse;
+.org-chart-container {
+  padding: 2rem;
+  overflow-x: auto;
+  min-height: 400px;
 }
 
-.org-chart-row {
-  border-bottom: 1px solid var(--oc-border);
-  transition: background-color 0.2s;
+/* Node styling */
+.org-node {
+  padding: var(--oc-node-padding);
+  min-width: var(--oc-node-min-width);
+  background: var(--oc-bg);
+  border: 1px solid var(--oc-border);
+  border-radius: 6px;
+  box-shadow: var(--oc-node-shadow);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.org-chart-row:hover {
-  background-color: var(--oc-row-hover);
+.org-node:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-.org-chart-cell {
-  padding: var(--oc-cell-padding);
-  text-align: left;
-  font-size: 14px;
+.org-node-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.org-chart-cell.name {
-  width: 40%;
+.org-node-name {
   font-weight: 500;
+  color: var(--oc-text);
+  font-size: 15px;
 }
 
-.org-chart-cell.role {
-  width: 60%;
+.org-node-role {
   display: flex;
   align-items: center;
   gap: 8px;
+  color: var(--oc-text);
+  opacity: 0.85;
+  font-size: 14px;
 }
 
 .role-icon {
@@ -75,46 +97,45 @@
   height: var(--oc-role-icon-size);
 }
 
+/* Tree structure styling */
+.org-chart :global(.rst__lineHalfHorizontalRight::before),
+.org-chart :global(.rst__lineFullVertical::after),
+.org-chart :global(.rst__lineHalfVerticalTop::after),
+.org-chart :global(.rst__lineHalfVerticalBottom::after) {
+  background-color: var(--oc-border);
+}
+
 /* Responsive design */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .org-chart {
     margin: 1rem;
   }
   
-  .org-chart-cell {
-    padding: 8px 4px;
+  .org-chart-container {
+    padding: 1rem;
   }
   
-  .org-chart-cell.name {
-    width: 35%;
-  }
-  
-  .org-chart-cell.role {
-    width: 65%;
-  }
-  
-  .role-text {
-    font-size: 13px;
+  .org-node {
+    min-width: 200px;
   }
 }
 
-@media (max-width: 480px) {
-  .org-chart-table {
-    display: block;
-  }
-  
-  .org-chart-row {
-    display: flex;
-    flex-direction: column;
+@media (max-width: 768px) {
+  .org-node {
+    min-width: 180px;
     padding: 8px;
   }
   
-  .org-chart-cell {
-    width: 100% !important;
-    padding: 4px;
+  .org-node-name {
+    font-size: 14px;
   }
   
-  .org-chart-cell.name {
-    border-bottom: none;
+  .org-node-role {
+    font-size: 13px;
+  }
+  
+  .role-icon {
+    width: 16px;
+    height: 16px;
   }
 }
