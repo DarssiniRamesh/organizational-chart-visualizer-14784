@@ -11,12 +11,12 @@
   --oc-expert-color: #4fd1c5;
   --oc-support-color: #718096;
   
-  /* Dynamic sizing based on hierarchy depth */
-  --oc-node-padding: clamp(4px, 0.5vw, 6px);
-  --oc-node-min-width: clamp(140px, 15vw, 180px);
-  --oc-node-max-width: clamp(160px, 18vw, 200px);
-  --oc-node-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  --oc-spacing-unit: clamp(0.5rem, 1vw, 1rem);
+  /* Enhanced dynamic sizing for deep hierarchies */
+  --oc-node-padding: clamp(3px, 0.4vw, 5px);
+  --oc-node-min-width: clamp(120px, 12vw, 160px);
+  --oc-node-max-width: clamp(140px, 14vw, 180px);
+  --oc-node-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  --oc-spacing-unit: clamp(0.3rem, 0.8vw, 0.8rem);
   
   width: 100%;
   max-width: 100%;
@@ -61,14 +61,26 @@
 }
 
 .org-chart-container {
-  padding: var(--oc-spacing-unit);
+  padding: calc(var(--oc-spacing-unit) * 0.5);
   overflow: visible;
   min-height: auto;
-  height: calc(100vh - 120px);
+  height: calc(100vh - 100px);
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+/* Optimize chart container for print/export */
+@media print {
+  .org-chart-container {
+    height: auto;
+    min-height: 100%;
+    transform: none !important;
+    page-break-inside: avoid;
+  }
 }
 
 /* Node styling */
@@ -162,29 +174,33 @@
   width: 1px;
 }
 
-/* Level-based optimizations */
+/* Enhanced level-based optimizations */
 .org-chart .rst__node {
-  padding-left: calc(var(--oc-spacing-unit) * 0.5);
+  padding-left: calc(var(--oc-spacing-unit) * 0.4);
 }
 
-/* Progressive spacing reduction for deeper levels */
+/* Progressive spacing and size reduction for deeper levels */
 .org-node[data-level="0"] {
-  margin: calc(var(--oc-spacing-unit) * 0.4);
+  margin: calc(var(--oc-spacing-unit) * 0.35);
+  font-size: clamp(12px, 1.1vw, 14px);
 }
 
 .org-node[data-level="1"] {
-  margin: calc(var(--oc-spacing-unit) * 0.35);
+  margin: calc(var(--oc-spacing-unit) * 0.3);
+  font-size: clamp(11px, 1vw, 13px);
 }
 
 .org-node[data-level="2"] {
-  margin: calc(var(--oc-spacing-unit) * 0.3);
+  margin: calc(var(--oc-spacing-unit) * 0.25);
+  font-size: clamp(10px, 0.9vw, 12px);
 }
 
 .org-node[data-level="3"],
 .org-node[data-level="4"],
 .org-node[data-level="5"] {
-  margin: calc(var(--oc-spacing-unit) * 0.25);
-  font-size: clamp(10px, 1vw, 12px);
+  margin: calc(var(--oc-spacing-unit) * 0.2);
+  font-size: clamp(9px, 0.85vw, 11px);
+  min-width: clamp(100px, 10vw, 140px);
 }
 
 /* Optimize connection lines for deep hierarchies */

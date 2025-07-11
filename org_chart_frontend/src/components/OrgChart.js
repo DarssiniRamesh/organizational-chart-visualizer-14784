@@ -30,17 +30,34 @@ const OrgChart = ({ data }) => {
       const chartRect = chart.getBoundingClientRect();
       const containerRect = container.getBoundingClientRect();
       
+      // Calculate available space with padding
+      const availableWidth = containerRect.width - 20;
+      const availableHeight = containerRect.height - 20;
+      
       // Calculate scales for both dimensions
-      const horizontalScale = (containerRect.width - 40) / chartRect.width;
-      const verticalScale = (containerRect.height - 40) / chartRect.height;
+      const horizontalScale = availableWidth / chartRect.width;
+      const verticalScale = availableHeight / chartRect.height;
       
       // Use the smaller scale to ensure chart fits both dimensions
-      const optimalScale = Math.min(horizontalScale, verticalScale, 1);
+      // Add a minimum scale to prevent excessive shrinking
+      const minScale = 0.4;
+      const rawScale = Math.min(horizontalScale, verticalScale, 1);
+      const optimalScale = Math.max(rawScale, minScale);
       
       // Update scale if it's significantly different
-      if (Math.abs(scale - optimalScale) > 0.05) {
+      if (Math.abs(scale - optimalScale) > 0.02) {
         setScale(optimalScale);
+        
+        // Apply scale transform
         chart.style.setProperty('--chart-scale', optimalScale);
+        
+        // Center the chart after scaling
+        const scaledWidth = chartRect.width * optimalScale;
+        const scaledHeight = chartRect.height * optimalScale;
+        const translateX = (availableWidth - scaledWidth) / 2;
+        const translateY = (availableHeight - scaledHeight) / 2;
+        
+        chart.style.transform = `scale(${optimalScale}) translate(${translateX / optimalScale}px, ${translateY / optimalScale}px)`;
       }
     };
     
