@@ -11,12 +11,12 @@
   --oc-expert-color: #4fd1c5;
   --oc-support-color: #718096;
   
-  /* Compact sizing */
-  --oc-node-padding: 6px;
-  --oc-node-min-width: 180px;
-  --oc-node-max-width: 200px;
+  /* Dynamic sizing based on hierarchy depth */
+  --oc-node-padding: clamp(4px, 0.5vw, 6px);
+  --oc-node-min-width: clamp(140px, 15vw, 180px);
+  --oc-node-max-width: clamp(160px, 18vw, 200px);
   --oc-node-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  --oc-spacing-unit: 1rem;
+  --oc-spacing-unit: clamp(0.5rem, 1vw, 1rem);
   
   width: 100%;
   max-width: 100%;
@@ -24,9 +24,10 @@
   background: var(--oc-bg);
   border: 1px solid var(--oc-border);
   border-radius: 8px;
-  overflow: hidden;
-  transform-origin: top center;
-  transform: scale(0.95);
+  overflow: visible;
+  transform-origin: center;
+  transform: scale(var(--chart-scale, 1));
+  transition: transform 0.3s ease;
 }
 
 .org-chart-header {
@@ -63,9 +64,11 @@
   padding: var(--oc-spacing-unit);
   overflow: visible;
   min-height: auto;
+  height: calc(100vh - 120px);
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
+  position: relative;
 }
 
 /* Node styling */
@@ -79,10 +82,12 @@
   box-shadow: var(--oc-node-shadow);
   transition: all 0.2s ease;
   position: relative;
-  margin: calc(var(--oc-spacing-unit) * 0.5);
+  margin: calc(var(--oc-spacing-unit) * 0.25);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: clamp(11px, 1.2vw, 14px);
+  line-height: 1.2;
 }
 
 /* Role-based styling */
@@ -157,17 +162,44 @@
   width: 1px;
 }
 
-/* Level-based indentation */
+/* Level-based optimizations */
 .org-chart .rst__node {
-  padding-left: calc(var(--oc-spacing-unit) * 0.75);
+  padding-left: calc(var(--oc-spacing-unit) * 0.5);
 }
 
-.org-chart .rst__node--level-1,
-.org-chart .rst__node--level-2,
+/* Progressive spacing reduction for deeper levels */
+.org-node[data-level="0"] {
+  margin: calc(var(--oc-spacing-unit) * 0.4);
+}
+
+.org-node[data-level="1"] {
+  margin: calc(var(--oc-spacing-unit) * 0.35);
+}
+
+.org-node[data-level="2"] {
+  margin: calc(var(--oc-spacing-unit) * 0.3);
+}
+
+.org-node[data-level="3"],
+.org-node[data-level="4"],
+.org-node[data-level="5"] {
+  margin: calc(var(--oc-spacing-unit) * 0.25);
+  font-size: clamp(10px, 1vw, 12px);
+}
+
+/* Optimize connection lines for deep hierarchies */
+.org-chart .rst__lineHalfHorizontalRight::before,
+.org-chart .rst__lineFullVertical::after,
+.org-chart .rst__lineHalfVerticalTop::after,
+.org-chart .rst__lineHalfVerticalBottom::after {
+  width: 1px;
+}
+
+/* Add horizontal compression for deeper levels */
 .org-chart .rst__node--level-3,
 .org-chart .rst__node--level-4,
 .org-chart .rst__node--level-5 {
-  padding-left: calc(var(--oc-spacing-unit) * 1);
+  padding-left: calc(var(--oc-spacing-unit) * 0.5);
 }
 
 /* Responsive design */

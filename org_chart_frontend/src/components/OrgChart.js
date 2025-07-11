@@ -18,17 +18,57 @@ const getRoleCategory = (role) => {
 
 // PUBLIC_INTERFACE
 const OrgChart = ({ data }) => {
+  const [scale, setScale] = React.useState(1);
+  const chartRef = React.useRef(null);
+  
+  React.useEffect(() => {
+    const calculateOptimalScale = () => {
+      if (!chartRef.current) return;
+      
+      const chart = chartRef.current;
+      const container = chart.parentElement;
+      const chartRect = chart.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+      
+      // Calculate scales for both dimensions
+      const horizontalScale = (containerRect.width - 40) / chartRect.width;
+      const verticalScale = (containerRect.height - 40) / chartRect.height;
+      
+      // Use the smaller scale to ensure chart fits both dimensions
+      const optimalScale = Math.min(horizontalScale, verticalScale, 1);
+      
+      // Update scale if it's significantly different
+      if (Math.abs(scale - optimalScale) > 0.05) {
+        setScale(optimalScale);
+        chart.style.setProperty('--chart-scale', optimalScale);
+      }
+    };
+    
+    calculateOptimalScale();
+    window.addEventListener('resize', calculateOptimalScale);
+    
+    return () => window.removeEventListener('resize', calculateOptimalScale);
+  }, [scale, data]);
   const handleExport = async () => {
     try {
-      const chartElement = document.getElementById('org-chart');
-      const dataUrl = await toPng(chartElement, {
-        quality: 0.95,
+      if (!chartRef.current) return;
+      
+      // Reset scale temporarily for high-quality export
+      const currentScale = chartRef.current.style.getPropertyValue('--chart-scale');
+      chartRef.current.style.setProperty('--chart-scale', '1');
+      
+      const dataUrl = await toPng(chartRef.current, {
+        quality: 1,
         backgroundColor: '#ffffff',
+        pixelRatio: 2,
+        skipAutoScale: true,
         style: {
-          transform: 'scale(1.2)',
-          transformOrigin: 'top left'
+          transform: 'none'
         }
       });
+      
+      // Restore original scale
+      chartRef.current.style.setProperty('--chart-scale', currentScale);
       
       const link = document.createElement('a');
       link.download = 'org-chart.png';
@@ -73,7 +113,7 @@ const OrgChart = ({ data }) => {
   };
 
   return (
-    <div className="org-chart" id="org-chart">
+    <div className="org-chart" id="org-chart" ref={chartRef}>
       <div className="org-chart-header">
         <h2>Organization Chart</h2>
         <button 
