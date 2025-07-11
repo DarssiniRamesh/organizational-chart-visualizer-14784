@@ -61,14 +61,12 @@ const OrgChart = ({ data }) => {
   };
 
   const renderTreeNodes = (nodeData, level = 0) => {
+    if (!nodeData) return null;
+    
     return (
       <TreeNode label={renderNode(nodeData, level)}>
         {nodeData.children?.map((child, index) => (
-          <TreeNode key={index} label={renderNode(child, level + 1)}>
-            {child.children?.map((grandChild, idx) => (
-              <TreeNode key={idx} label={renderNode(grandChild, level + 2)} />
-            ))}
-          </TreeNode>
+          renderTreeNodes(child, level + 1)
         ))}
       </TreeNode>
     );
